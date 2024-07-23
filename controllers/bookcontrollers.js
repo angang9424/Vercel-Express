@@ -8,6 +8,14 @@ const bookController = {
             res.json({msg: error.msg})
         }
     },
+    getName: async(req, res) => {
+        try {
+            const { rows } = await postgre.query("select name from books")
+            res.json({msg: "OK", data: rows})
+        } catch (error) {
+            res.json({msg: error.msg})
+        }
+    },
     getById: async(req, res) => {
         try {
             const { rows } = await postgre.query("select * from books where book_id = $1", [req.params.id])

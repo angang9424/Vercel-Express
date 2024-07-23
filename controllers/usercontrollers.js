@@ -8,9 +8,11 @@ const userController = {
             res.json({msg: error.msg})
         }
     },
-    getById: async(req, res) => {
+    checkUser: async(req, res) => {
         try {
-            const { rows } = await postgre.query("select * from users where username = $1 and password = $2", [req.params.username, req.params.password])
+			const { username, password } = req.body;
+
+            const { rows } = await postgre.query("select * from users where username = $1 and password = $2", [username, password])
 
             if (rows[0]) {
                 return res.json({msg: "OK", data: rows})
@@ -23,7 +25,7 @@ const userController = {
     },
     create: async(req, res) => {
         try {
-            const { username, password } = req.body
+            const { username, password } = req.body;
 
             const sql = 'INSERT INTO users(username, password) VALUES($1, $2) RETURNING *'
 
