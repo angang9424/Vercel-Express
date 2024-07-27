@@ -1,5 +1,6 @@
 const postgre = require('../database');
 const { sign } = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const userController = {
 	getAll: async(req, res) => {
@@ -14,16 +15,22 @@ const userController = {
 		try {
 			const { username, password } = req.body;
 
-			const { rows } = await postgre.query("select * from users where username = $1 and password = $2", [username, password]);
-			rows.forEach(row => {
-				row.token = sign({ username: row.username, id: row.id }, "importantsecret");
-			});
+			const { rows } = await postgre.query("select * from users where username = $1", [username]);
 
-			if (rows[0]) {
-				return res.json({msg: "OK", data: rows})
+			if (rows) {
+				for (const row of rows) {
+					const match = await bcrypt.compare(password, row.password);
+
+					if (match) {
+						row.token = sign({ username: row.username, id: row.id }, "importantsecret");
+						return res.json({ msg: "OK", data: rows });
+					} else {
+						return res.json({error: "Wrong Username or Password"});
+					}
+				}
 			}
 
-			res.status(404).json({msg: "not found"})
+			res.status(404).json({msg: "not found"});
 		} catch (error) {
 			res.json({msg: error.msg})
 		}
@@ -31,10 +38,21 @@ const userController = {
 	create: async(req, res) => {
 		try {
 			const { username, password } = req.body;
+			let hash_pass = "";
 
 			const sql = 'INSERT INTO users(username, password) VALUES($1, $2) RETURNING *'
 
-			const { rows } = await postgre.query(sql, [username, password])
+			await bcrypt.hash(password, 10).then((hash) => {
+				hash_pass = hash;
+				// Users.create({
+				// 	username: username,
+				// 	password: hash,
+				// });
+		
+				// res.json("SUCCESS");
+			})
+
+			const { rows } = await postgre.query(sql, [username, hash_pass])
 
 			res.json({msg: "OK", data: rows[0]})
 
