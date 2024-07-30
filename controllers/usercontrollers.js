@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const userController = {
 	getAll: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from users")
+			const { rows } = await postgre.query("SELECT * FROM users")
 			res.json({msg: "OK", data: rows})
 		} catch (error) {
 			res.json({msg: error.msg})
@@ -15,7 +15,7 @@ const userController = {
 		try {
 			const { username, password } = req.body;
 
-			const { rows } = await postgre.query("select * from users where username = $1", [username]);
+			const { rows } = await postgre.query("SELECT * FROM users WHERE username = $1", [username]);
 
 			if (rows) {
 				for (const row of rows) {
@@ -23,7 +23,7 @@ const userController = {
 
 					if (match) {
 						row.token = sign({ username: row.username, id: row.id }, "importantsecret");
-						return res.json({ msg: "OK", data: rows });
+						return res.json({ msg: "OK", data: row });
 					} else {
 						return res.json({error: "Wrong Username or Password"});
 					}
@@ -37,10 +37,11 @@ const userController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { username, password } = req.body;
+			const { username, password, created_modified } = req.body;
+
 			let hash_pass = "";
 
-			const sql = 'INSERT INTO users(username, password) VALUES($1, $2) RETURNING *'
+			const sql = 'INSERT INTO users(username, password, created, modified) VALUES($1, $2, $3, $4) RETURNING *'
 
 			await bcrypt.hash(password, 10).then((hash) => {
 				hash_pass = hash;
@@ -52,7 +53,7 @@ const userController = {
 				// res.json("SUCCESS");
 			})
 
-			const { rows } = await postgre.query(sql, [username, hash_pass])
+			const { rows } = await postgre.query(sql, [username, hash_pass, created_modified, created_modified])
 
 			res.json({msg: "OK", data: rows[0]})
 
@@ -60,20 +61,24 @@ const userController = {
 			res.json({msg: error.msg})
 		}
 	},
-	// updateById: async(req, res) => {
-	//     try {
-	//         const { name, price } = req.body
+	updatePassword: async(req, res) => {
+	    try {
+	        const { username, password, modified } = req.body;
 
-	//         const sql = 'UPDATE books set name = $1, price = $2 where book_id = $3 RETURNING *'
+			let hash_pass = "";
 
-	//         const { rows } = await postgre.query(sql, [name, price, req.params.id])
+	        const sql = 'UPDATE users SET password = $1, modified = $2 WHERE id = $3 AND username = $4 RETURNING *';
 
-	//         res.json({msg: "OK", data: rows[0]})
+			await bcrypt.hash(password, 10).then((hash) => {
+				hash_pass = hash;
+			})
+	        const { rows } = await postgre.query(sql, [hash_pass, modified, req.params.id, username]);
 
-	//     } catch (error) {
-	//         res.json({msg: error.msg})
-	//     }
-	// },
+	        res.json({msg: "OK", data: rows[0]});
+	    } catch (error) {
+	        res.json({msg: error.msg});
+	    }
+	},
 	// deleteById: async(req, res) => {
 	//     try {
 	//         const sql = 'DELETE FROM books where book_id = $1 RETURNING *'
