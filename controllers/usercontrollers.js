@@ -17,7 +17,7 @@ const userController = {
 
 			let query_condition = "";
 
-			if (internalCall) {
+			if (internalCall===true) {
 				query_condition = `AND id = ${req.params.id}`;
 			}
 
@@ -27,7 +27,7 @@ const userController = {
 				for (const row of rows) {
 					const match = await bcrypt.compare(password, row.password);
 
-					if (!internalCall) {
+					if (internalCall!=true) {
 						if (match) {
 							row.token = sign({ username: row.username, id: row.id }, "importantsecret");
 							return res.json({ msg: "OK", data: row });
@@ -87,7 +87,7 @@ const userController = {
 				const { rows } = await postgre.query(sql, [hash_pass, modified, req.params.id, username]);
 			}
 
-			res.json({msg: "OK", compare_pass: compare_pass});
+			return res.json({msg: "OK", data: compare_pass});
 		} catch (error) {
 			console.log(error)
 			res.json({msg: error.msg});
