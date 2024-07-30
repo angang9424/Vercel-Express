@@ -1,4 +1,5 @@
-const postgre = require('../database')
+const postgre = require('../database');
+
 const bookController = {
     getAll: async(req, res) => {
         try {
