@@ -32,11 +32,11 @@ const bookController = {
     },
     create: async(req, res) => {
         try {
-            const { name, price } = req.body;
+            const { name, price, modified } = req.body;
 
-            const sql = 'INSERT INTO books(name, price) VALUES($1, $2) RETURNING *';
+            const sql = 'INSERT INTO books(name, price, modified) VALUES($1, $2, $3) RETURNING *';
 
-            const { rows } = await postgre.query(sql, [name, price]);
+            const { rows } = await postgre.query(sql, [name, price, modified]);
 
             res.json({msg: "OK", data: rows[0]});
         } catch (error) {
