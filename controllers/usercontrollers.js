@@ -50,7 +50,7 @@ const userController = {
 		try {
 			const { username } = req.body;
 			const { rows } = await postgre.query("SELECT first_name, last_name, email, phone_number FROM users WHERE id=$1 AND username=$2", [req.params.id, username]);
-			res.json({msg: "OK", data: rows});
+			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
