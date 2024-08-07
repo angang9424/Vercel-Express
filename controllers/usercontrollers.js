@@ -104,11 +104,11 @@ const userController = {
 	},
 	updateUserDetails: async(req, res) => {
 	    try {
-	        const { first_name, last_name, email, phone, modified, username } = req.body;
+	        const { first_name, last_name, email, phone_number, modified, username } = req.body;
 
 			const sql = 'UPDATE users SET first_name = $1, last_name = $2, email = $3, phone_number = $4, modified = $5 WHERE id = $6 AND username = $7 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [first_name, last_name, email, phone, modified, req.params.id, username]);
+			const { rows } = await postgre.query(sql, [first_name, last_name, email, phone_number, modified, req.params.id, username]);
 
 			return res.json({msg: "OK", data: rows});
 		} catch (error) {
