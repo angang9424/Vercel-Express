@@ -46,6 +46,15 @@ const userController = {
 			res.json({msg: error.msg});
 		}
 	},
+	getUserData: async(req, res) => {
+		try {
+			const { username } = req.body;
+			const { rows } = await postgre.query("SELECT first_name, last_name, email, phone_number FROM users WHERE id=$1 AND username=$2", [req.params.id, username]);
+			res.json({msg: "OK", data: rows});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
 	create: async(req, res) => {
 		try {
 			const { username, password, created_modified } = req.body;
