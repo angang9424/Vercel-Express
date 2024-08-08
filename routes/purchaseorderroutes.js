@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const bookController = require('../controllers/bookcontrollers');
+const bookController = require('../controllers/purchaseordercontrollers');
 
 router.get("/", bookController.getAll);
 router.get("/bookname", bookController.getName);

@@ -3,7 +3,7 @@ const postgre = require('../database');
 const bookController = {
     getAll: async(req, res) => {
         try {
-            const { rows } = await postgre.query("select * from books");
+            const { rows } = await postgre.query("select * from purchase_order");
             res.json({msg: "OK", data: rows});
         } catch (error) {
             res.json({msg: error.msg});
@@ -11,7 +11,7 @@ const bookController = {
     },
     getName: async(req, res) => {
         try {
-            const { rows } = await postgre.query("select name from books");
+            const { rows } = await postgre.query("select name from purchase_order");
             res.json({msg: "OK", data: rows});
         } catch (error) {
             res.json({msg: error.msg});
@@ -19,7 +19,7 @@ const bookController = {
     },
     getById: async(req, res) => {
         try {
-            const { rows } = await postgre.query("select * from books where book_id = $1", [req.params.id]);
+            const { rows } = await postgre.query("select * from purchase_order where book_id = $1", [req.params.id]);
 
             if (rows[0]) {
                 return res.json({msg: "OK", data: rows});
@@ -34,7 +34,7 @@ const bookController = {
         try {
             const { name, price, category, created_modified_by, modified } = req.body;
 
-            const sql = 'INSERT INTO books(name, price, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+            const sql = 'INSERT INTO purchase_order(name, price, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
             const { rows } = await postgre.query(sql, [name, price, category, created_modified_by, created_modified_by, modified]);
 
@@ -48,7 +48,7 @@ const bookController = {
         try {
             const { name, price, modified } = req.body;
 
-            const sql = 'UPDATE books set name = $1, price = $2, modified = $3 where book_id = $4 RETURNING *';
+            const sql = 'UPDATE purchase_order set name = $1, price = $2, modified = $3 where book_id = $4 RETURNING *';
 
             const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
 
@@ -59,7 +59,7 @@ const bookController = {
     },
     deleteById: async(req, res) => {
         try {
-            const sql = 'DELETE FROM books where book_id = $1 RETURNING *';
+            const sql = 'DELETE FROM purchase_order where book_id = $1 RETURNING *';
 
             const { rows } = await postgre.query(sql, [req.params.id]);
 
