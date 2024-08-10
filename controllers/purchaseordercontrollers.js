@@ -38,7 +38,7 @@ const bookController = {
 
             const { rows } = await postgre.query(sql, [date, total_amount, created_modified_by, created_modified_by, modified]);
 
-            res.json({msg: "OK", data: rows});
+            res.json({msg: "OK", data: rows[0]});
         } catch (error) {
             res.json({msg: error.msg});
         }
