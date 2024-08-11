@@ -8,7 +8,7 @@ router.get("/bookname", bookController.getName);
 router.get("/:id", bookController.getById);
 router.post("/", bookController.create);
 router.post("/createchild", bookController.createChild);
-router.post("/getchildbyid/:id", bookController.getChildById);
+router.get("/getchildbyid/:id", bookController.getChildById);
 router.put("/:id", bookController.updateById);
 router.delete("/:id", bookController.deleteById);
 
