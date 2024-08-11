@@ -84,11 +84,11 @@ const poController = {
 	},
 	updatePOById: async(req, res) => {
 		try {
-			const { name, price, modified_by, modified } = req.body;
+			const { date, total_amount, modified_by, modified } = req.body;
 
 			const sql = 'UPDATE purchase_order set date = $1, total_amount = $2, modified_by = $3, modified = $4 where id = $5 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, price, modified_by, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [date, total_amount, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
