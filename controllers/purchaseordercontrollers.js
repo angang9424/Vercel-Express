@@ -71,7 +71,7 @@ const bookController = {
 	},
 	getChildById: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from purchase_order_item where order_id = $1", [req.params.id]);
+			const { rows } = await postgre.query("select * from purchase_order_item where order_id = $1 ORDER BY idx ASC", [req.params.id]);
 
 			if (rows) {
 				return res.json({msg: "OK", data: rows});
