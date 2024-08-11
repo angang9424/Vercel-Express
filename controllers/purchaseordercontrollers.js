@@ -43,7 +43,7 @@ const bookController = {
 			res.json({msg: error.msg});
 		}
 	},
-	createchild: async(req, res) => {
+	createChild: async(req, res) => {
 		try {
 			const { item, qty, rate, amount, order_id, created_modified_by, modified } = req.body;
 
@@ -52,6 +52,19 @@ const bookController = {
 			const { rows } = await postgre.query(sql, [item, qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
 
 			res.json({msg: "OK", data: rows[0]});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
+	getChildById: async(req, res) => {
+		try {
+			const { rows } = await postgre.query("select * from purchase_order where id = $1", [req.params.id]);
+
+			if (rows[0]) {
+				return res.json({msg: "OK", data: rows[0]});
+			}
+
+			res.status(404).json({msg: "not found"});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
