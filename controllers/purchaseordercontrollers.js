@@ -1,6 +1,6 @@
 const postgre = require('../database');
 
-const bookController = {
+const poController = {
 	getAll: async(req, res) => {
 		try {
 			const { rows } = await postgre.query("select * from purchase_order");
@@ -82,13 +82,13 @@ const bookController = {
 			res.json({msg: error.msg});
 		}
 	},
-	updateById: async(req, res) => {
+	updatePOById: async(req, res) => {
 		try {
-			const { name, price, modified } = req.body;
+			const { name, price, modified_by, modified } = req.body;
 
-			const sql = 'UPDATE purchase_order set name = $1, price = $2, modified = $3 where book_id = $4 RETURNING *';
+			const sql = 'UPDATE purchase_order set date = $1, total_amount = $2, modified_by = $3, modified = $4 where id = $5 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [name, price, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
@@ -112,4 +112,4 @@ const bookController = {
 	}
 }
 
-module.exports = bookController
+module.exports = poController

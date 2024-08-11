@@ -10,7 +10,7 @@ router.post("/", bookController.create);
 router.post("/createchild", bookController.createChild);
 router.get("/getpobyid/:id", bookController.getPOById);
 router.get("/getchildbyid/:id", bookController.getChildById);
-router.put("/:id", bookController.updateById);
+router.put("/:id", bookController.updatePOById);
 router.delete("/:id", bookController.deleteById);
 
 module.exports = router;
