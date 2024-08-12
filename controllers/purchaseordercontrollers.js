@@ -95,6 +95,21 @@ const poController = {
 			res.json({msg: error.msg})
 		}
 	},
+	updateDeleteChildById: async(req, res) => {
+		try {
+			const sql = 'DELETE FROM purchase_order_item where order_id = $1 RETURNING *';
+
+			const { rows } = await postgre.query(sql, [req.params.id]);
+
+			if (rows[0]) {
+				return res.json({msg: "OK", data: rows[0]});
+			}
+
+			return res.status(404).json({msg: "not found"});
+		} catch (error) {
+			res.json({msg: error.msg})
+		}
+	},
 	deleteById: async(req, res) => {
 		try {
 			const sql = 'DELETE FROM purchase_order where book_id = $1 RETURNING *';
