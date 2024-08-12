@@ -101,11 +101,11 @@ const poController = {
 
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
-			if (rows[0]) {
-				return res.json({msg: "OK", data: rows[0]});
-			}
-
-			return res.status(404).json({msg: "not found"});
+			// if (rows[0]) {
+			// 	return res.json({msg: "OK", data: rows[0]});
+			// }
+			return res.json({msg: "OK", data: rows});
+			// return res.status(404).json({msg: "not found"});
 		} catch (error) {
 			res.json({msg: error.msg})
 		}
