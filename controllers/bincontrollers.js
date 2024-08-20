@@ -1,6 +1,6 @@
 const postgre = require('../database');
 
-const bookController = {
+const binController = {
 	getAll: async(req, res) => {
 		try {
 			const { rows } = await postgre.query("select * from books");
@@ -38,7 +38,7 @@ const bookController = {
 
 			const { rows } = await postgre.query(sql, [item_id, item_name, created_modified_by, created_modified_by, modified]);
 
-			res.json({msg: "OK", data: rows[0]});
+			return {msg: "OK", data: 'yes1'};
 		} catch (error) {
 			console.log(error)
 			res.json({msg: error.msg});
@@ -74,4 +74,4 @@ const bookController = {
 	}
 }
 
-module.exports = bookController
+module.exports = binController;
