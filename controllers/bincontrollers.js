@@ -38,7 +38,7 @@ const binController = {
 
 			const { rows } = await postgre.query(sql, [item_id, item_name, created_modified_by, created_modified_by, modified]);
 
-			return {msg: "OK", data: 'yes1'};
+			return {msg: "OK"};
 		} catch (error) {
 			console.log(error)
 			res.json({msg: error.msg});
@@ -46,15 +46,15 @@ const binController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { name, price, modified } = req.body;
+			const { item_id, qty, modified_by,modified } = req.body;
 
-			const sql = 'UPDATE books set name = $1, price = $2, modified = $3 where book_id = $4 RETURNING *';
+			const sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [qty, modified_by, modified, item_id]);
 
-			res.json({msg: "OK", data: rows[0]});
+			return {msg: "OK"};
 		} catch (error) {
-			res.json({msg: error.msg})
+			res.json({msg: error.msg});
 		}
 	},
 	deleteById: async(req, res) => {

@@ -1,4 +1,5 @@
 const postgre = require('../database');
+const binController = require('../controllers/bincontrollers');
 
 const poController = {
 	getAll: async(req, res) => {
@@ -51,6 +52,10 @@ const poController = {
 
 			const { rows } = await postgre.query(sql, [idx, item, qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
 
+			if (rows[0]) {
+				req.body = {item_id: item, qty: qty, modified_by: created_modified_by, modified: modified};
+				await binController.updateById(req, res);
+			}
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			res.json({msg: error.msg});
