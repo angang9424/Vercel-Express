@@ -117,12 +117,16 @@ const poController = {
 	},
 	deleteById: async(req, res) => {
 		try {
-			const sql = 'DELETE FROM purchase_order where book_id = $1 RETURNING *';
+			const sql = 'DELETE FROM purchase_order where id = $1 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
+			const sql_child = 'DELETE FROM purchase_order_item where order_id = $1 RETURNING *';
+
+			const { child_rows } = await postgre.query(sql_child, [req.params.id]);
+
 			if (rows[0]) {
-				return res.json({msg: "OK", data: rows[0]});
+				return res.json({msg: "OK"});
 			}
 
 			return res.status(404).json({msg: "not found"});
