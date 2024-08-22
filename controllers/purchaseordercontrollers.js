@@ -116,7 +116,7 @@ const poController = {
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
 				console.log(modified_by, modified)
 				try {
-					await postgre.query(bin_sql, [row.qty, req.param.modified_by, req.param.modified, row.item]);
+					await postgre.query(bin_sql, [row.qty, req.params.modified_by, req.params.modified, row.item]);
 				} catch (error) {
 					return res.json({msg: 'modified', data: req})
 				}
