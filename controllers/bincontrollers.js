@@ -46,7 +46,7 @@ const binController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { item_id, qty, modified_by,modified } = req.body;
+			const { item_id, qty, modified_by, modified } = req.body;
 
 			const sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
