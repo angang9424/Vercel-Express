@@ -114,11 +114,11 @@ const poController = {
 
 			for (const row of rows) {
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
-
+				console.log(modified_by, modified)
 				try {
 					await postgre.query(bin_sql, [row.qty, modified_by, modified, row.item]);
 				} catch (error) {
-					return res.json({msg: modified, data: req})
+					return res.json({msg: 'modified', data: req})
 				}
 			};
 
@@ -128,8 +128,7 @@ const poController = {
 			return res.json({msg: "OK", data: rows[0]});
 			// return res.status(404).json({msg: "not found"});
 		} catch (error) {
-			const { modified_by, modified } = req.body;
-			return res.json({msg: error, data: modified_by})
+			return res.json({msg: req.body})
 		}
 	},
 	deleteById: async(req, res) => {
