@@ -125,7 +125,7 @@ const poController = {
 			// return res.status(404).json({msg: "not found"});
 		} catch (error) {
 			const { modified_by, modified } = req.body;
-			return res.json({msg: error.msg, data: modified_by})
+			return res.json({msg: error, data: modified_by})
 		}
 	},
 	deleteById: async(req, res) => {
