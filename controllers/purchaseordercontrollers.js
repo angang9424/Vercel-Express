@@ -118,7 +118,7 @@ const poController = {
 				try {
 					await postgre.query(bin_sql, [row.qty, modified_by, modified, row.item]);
 				} catch (error) {
-					return res.json({msg: error, data: modified})
+					return res.json({msg: modified, data: modified})
 				}
 			};
 
