@@ -1,5 +1,4 @@
 const postgre = require('../database');
-const binController = require('../controllers/bincontrollers');
 
 const poController = {
 	getAll: async(req, res) => {

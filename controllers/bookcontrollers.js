@@ -1,5 +1,4 @@
 const postgre = require('../database');
-const binController = require('../controllers/bincontrollers');
 
 const bookController = {
 	getAll: async(req, res) => {
@@ -41,7 +40,7 @@ const bookController = {
 
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
-			await postgre.query(bin_sql, [rows[0], name, created_modified_by, created_modified_by, modified]);
+			await postgre.query(bin_sql, [rows[0].book_id, name, created_modified_by, created_modified_by, modified]);
 
 			// if (rows[0]) {
 			// 	req.body = {item_id: rows[0].book_id, item_name: name, created_modified_by: created_modified_by, modified: modified};
