@@ -64,7 +64,7 @@ const soController = {
 			res.json({msg: error.msg});
 		}
 	},
-	getPOById: async(req, res) => {
+	getSOById: async(req, res) => {
 		try {
 			const { rows } = await postgre.query("select * from sales_order where id = $1", [req.params.id]);
 
@@ -90,7 +90,7 @@ const soController = {
 			res.json({msg: error.msg});
 		}
 	},
-	updatePOById: async(req, res) => {
+	updateSOById: async(req, res) => {
 		try {
 			const { date, total_amount, modified_by, modified } = req.body;
 
