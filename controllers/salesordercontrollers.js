@@ -51,7 +51,7 @@ const soController = {
 
 			const { rows } = await postgre.query(sql, [idx, item, qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
 
-			const bin_sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
+			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
 			await postgre.query(bin_sql, [qty, created_modified_by, modified, item]);
 
@@ -112,7 +112,7 @@ const soController = {
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
 			for (const row of rows) {
-				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
+				const bin_sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4';
 				console.log(modified_by, modified)
 				try {
 					await postgre.query(bin_sql, [row.qty, req.query.modified_by, req.query.modified, row.item]);
