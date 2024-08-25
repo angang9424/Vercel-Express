@@ -105,20 +105,14 @@ const poController = {
 	},
 	updateDeleteChildById: async(req, res) => {
 		try {
-			const { modified_by, modified } = req.body;
-
 			const sql = 'DELETE FROM purchase_order_item where order_id = $1 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
 			for (const row of rows) {
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
-				console.log(modified_by, modified)
-				try {
-					await postgre.query(bin_sql, [row.qty, req.query.modified_by, req.query.modified, row.item]);
-				} catch (error) {
-					return res.json({msg: 'modified', data: req})
-				}
+
+				await postgre.query(bin_sql, [row.qty, req.query.modified_by, req.query.modified, row.item]);
 			};
 
 			// if (rows[0]) {
@@ -139,6 +133,12 @@ const poController = {
 			const sql_child = 'DELETE FROM purchase_order_item where order_id = $1 RETURNING *';
 
 			const { child_rows } = await postgre.query(sql_child, [req.params.id]);
+
+			for (const row of child_rows) {
+				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
+
+				await postgre.query(bin_sql, [row.qty, req.query.modified_by, req.query.modified, row.item]);
+			};
 
 			if (rows[0]) {
 				return res.json({msg: "OK"});
