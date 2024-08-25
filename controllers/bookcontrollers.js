@@ -3,7 +3,7 @@ const postgre = require('../database');
 const bookController = {
 	getAll: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from books");
+			const { rows } = await postgre.query("SELECT books.*, bin.qty AS stock_qty FROM books INNER JOIN bin ON bin.item_id = books.book_id");
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
