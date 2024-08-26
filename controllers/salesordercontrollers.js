@@ -45,11 +45,11 @@ const soController = {
 	},
 	createChild: async(req, res) => {
 		try {
-			const { idx, item, qty, rate, amount, order_id, created_modified_by, modified } = req.body;
+			const { idx, item, qty, stock_qty, rate, amount, order_id, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO sales_order_item(idx, item, qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
+			const sql = 'INSERT INTO sales_order_item(idx, item, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [idx, item, qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [idx, item, qty, stock_qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
 
 			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
@@ -79,7 +79,7 @@ const soController = {
 	},
 	getChildById: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from sales_order_item where order_id = $1 ORDER BY idx ASC", [req.params.id]);
+			const { rows } = await postgre.query("SELECT * FROM sales_order_item WHERE order_id = $1 ORDER BY idx ASC", [req.params.id]);
 
 			if (rows) {
 				return res.json({msg: "OK", data: rows});
