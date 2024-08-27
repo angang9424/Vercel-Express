@@ -61,6 +61,7 @@ const soController = {
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
+			await client.query('ROLLBACK');
 			res.json({msg: error.msg});
 		}
 	},
