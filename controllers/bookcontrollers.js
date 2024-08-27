@@ -11,7 +11,7 @@ const bookController = {
 	},
 	test: async(req, res) => {
 		try {
-			res.status(404).json({msg: "not found"});
+			res.status(422).json({msg: "not found"});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
