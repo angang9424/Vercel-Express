@@ -9,6 +9,13 @@ const bookController = {
 			res.json({msg: error.msg});
 		}
 	},
+	test: async(req, res) => {
+		try {
+			res.status(404).json({msg: "not found"});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
 	getName: async(req, res) => {
 		try {
 			const { rows } = await postgre.query("select name from books");
