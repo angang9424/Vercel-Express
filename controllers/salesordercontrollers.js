@@ -36,7 +36,7 @@ const soController = {
 		try {
 			await client.query('BEGIN');
 
-			const { date, total_amount, items, created_modified_by, modified } = req.body;
+			let { date, total_amount, items, created_modified_by, modified } = req.body;
 
 			const sql = 'INSERT INTO sales_order(date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
@@ -49,7 +49,7 @@ const soController = {
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-				const { rows: binRrows } = await client.query(bin_sql, [item.qty, created_modified_by, modified, item]);
+				const { rows: binRrows } = await client.query(bin_sql, [item.qty, created_modified_by, modified, item.item]);
 
 				if (binRrows[0].qty >= 0) {
 					await client.query('COMMIT');
