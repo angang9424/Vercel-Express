@@ -128,13 +128,13 @@ const poController = {
 		try {
 			const sql = 'DELETE FROM purchase_order where id = $1 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [req.params.id]);
+			await postgre.query(sql, [req.params.id]);
 
 			const sql_child = 'DELETE FROM purchase_order_item where order_id = $1 RETURNING *';
 
-			const { child_rows } = await postgre.query(sql_child, [req.params.id]);
+			const { rows } = await postgre.query(sql_child, [req.params.id]);
 
-			for (const row of child_rows) {
+			for (const row of rows) {
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4';
 
 				await postgre.query(bin_sql, [row.qty, req.query.modified_by, req.query.modified, row.item]);
