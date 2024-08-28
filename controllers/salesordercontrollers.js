@@ -55,7 +55,7 @@ const soController = {
 					await client.query('COMMIT');
 				} else {
 					await client.query('ROLLBACK');
-					item.qty = binRrows[0].qty + item.qty
+					item.qty = parseInt(binRrows[0].qty) + parseInt(item.qty);
 					return res.status(400).json({msg: "not enough stock", data: {items: items}});
 				}
 			}

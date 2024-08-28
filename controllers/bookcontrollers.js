@@ -10,9 +10,34 @@ const bookController = {
 		}
 	},
 	test: async(req, res) => {
+		const client = await postgre.connect();
+		const utcDateTime = new Date().toISOString();
+		const utcDateConvertToLocal = new Date(utcDateTime);
+
 		try {
-			res.status(200).json({msg: "not found"});
+			await client.query('BEGIN');
+
+			const { item, qty } = req.body;
+
+			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
+
+			const { rows: binRrows } = await client.query(bin_sql, [qty, 'jang1', utcDateConvertToLocal, item]);
+			console.log(binRrows)
+
+			if (binRrows[0].qty >= 0) {
+				await client.query('COMMIT');
+			} else {
+				await client.query('ROLLBACK');
+				return res.status(400).json({msg: "not enough stock"});
+			}
+
+			// if (rows[0]) {
+			// 	req.body = {item_id: item, qty: qty, modified_by: created_modified_by, modified: modified};
+			// 	await binController.updateById(req, res);
+			// }
+			return res.json({msg: "OK", data: binRrows[0]});
 		} catch (error) {
+			await client.query('ROLLBACK');
 			res.json({msg: error.msg});
 		}
 	},
