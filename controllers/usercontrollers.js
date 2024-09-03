@@ -1,6 +1,7 @@
 const postgre = require('../database');
 const { sign } = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 const userController = {
 	getAll: async(req, res) => {
@@ -78,6 +79,29 @@ const userController = {
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			res.json({msg: error.msg});
+		}
+	},
+	userProPic: async(req, res) => {
+		const { file } = req;
+  		const fileName = req.body.name || file.originalname;
+
+		try {
+			// Read the file into a buffer
+			const imageData = fs.readFileSync(file.path);
+
+			// Insert the file into the database
+			const result = await pool.query(
+				'INSERT INTO images (name, image_data) VALUES ($1, $2) RETURNING id',
+				[fileName, imageData]
+			);
+		
+			// Cleanup temporary file
+			fs.unlinkSync(file.path);
+		
+			res.status(200).json({ message: 'Image uploaded successfully', imageId: result.rows[0].id });
+		} catch (error) {
+			console.error('Error uploading image:', error);
+   			res.status(500).json({ message: 'Failed to upload image' });
 		}
 	},
 	updatePassword: async(req, res) => {
