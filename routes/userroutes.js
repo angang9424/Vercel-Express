@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 
 const userController = require('../controllers/usercontrollers');
-const upload = multer({ dest: '../uploads' });
+const upload = multer({ dest: '../uploads/' });
 
 router.get("/", userController.getAll);
 router.post("/userLogin", userController.userLogin);
