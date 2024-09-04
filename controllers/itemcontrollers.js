@@ -9,6 +9,14 @@ const itemController = {
 			res.json({msg: error.msg});
 		}
 	},
+	itemCatGetAll: async(req, res) => {
+		try {
+			const { rows } = await postgre.query("SELECT id AS value, name AS label FROM item_category");
+			res.json({msg: "OK", data: rows});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
 	test: async(req, res) => {
 		const client = await postgre.connect();
 		const utcDateTime = new Date().toISOString();
@@ -22,7 +30,6 @@ const itemController = {
 			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
 			const { rows: binRrows } = await client.query(bin_sql, [qty, 'jang1', utcDateConvertToLocal, item]);
-			console.log(binRrows)
 
 			if (binRrows[0].qty >= 0) {
 				await client.query('COMMIT');
@@ -73,6 +80,25 @@ const itemController = {
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
 			await postgre.query(bin_sql, [rows[0].id, name, created_modified_by, created_modified_by, modified]);
+
+			// if (rows[0]) {
+			// 	req.body = {id: rows[0].id, item_name: name, created_modified_by: created_modified_by, modified: modified};
+			// 	await binController.create(req, res);
+			// }
+
+			res.json({msg: "OK", data: rows[0]});
+		} catch (error) {
+			console.log(error)
+			res.json({msg: error.msg});
+		}
+	},
+	itemCatCreate: async(req, res) => {
+		try {
+			const { name, created_modified_by, modified } = req.body;
+
+			const sql = 'INSERT INTO item_category(name, created_by, modified_by, modified) VALUES($1, $2, $3, $4) RETURNING *';
+
+			const { rows } = await postgre.query(sql, [name, created_modified_by, created_modified_by, modified]);
 
 			// if (rows[0]) {
 			// 	req.body = {id: rows[0].id, item_name: name, created_modified_by: created_modified_by, modified: modified};
