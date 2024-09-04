@@ -1,9 +1,9 @@
 const postgre = require('../database');
 
-const bookController = {
+const itemController = {
 	getAll: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("SELECT books.*, bin.qty AS stock_qty FROM books INNER JOIN bin ON bin.item_id = books.book_id");
+			const { rows } = await postgre.query("SELECT items.*, bin.qty AS stock_qty FROM items INNER JOIN bin ON bin.item_id = items.id");
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
@@ -32,7 +32,7 @@ const bookController = {
 			}
 
 			// if (rows[0]) {
-			// 	req.body = {item_id: item, qty: qty, modified_by: created_modified_by, modified: modified};
+			// 	req.body = {id: item, qty: qty, modified_by: created_modified_by, modified: modified};
 			// 	await binController.updateById(req, res);
 			// }
 			return res.json({msg: "OK", data: binRrows[0]});
@@ -43,7 +43,7 @@ const bookController = {
 	},
 	getName: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select name from books");
+			const { rows } = await postgre.query("select name from items");
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
@@ -51,7 +51,7 @@ const bookController = {
 	},
 	getById: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from books where book_id = $1", [req.params.id]);
+			const { rows } = await postgre.query("select * from items where id = $1", [req.params.id]);
 
 			if (rows[0]) {
 				return res.json({msg: "OK", data: rows});
@@ -66,16 +66,16 @@ const bookController = {
 		try {
 			const { name, price, category, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO books(name, price, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO items(name, price, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
 			const { rows } = await postgre.query(sql, [name, price, category, created_modified_by, created_modified_by, modified]);
 
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
-			await postgre.query(bin_sql, [rows[0].book_id, name, created_modified_by, created_modified_by, modified]);
+			await postgre.query(bin_sql, [rows[0].id, name, created_modified_by, created_modified_by, modified]);
 
 			// if (rows[0]) {
-			// 	req.body = {item_id: rows[0].book_id, item_name: name, created_modified_by: created_modified_by, modified: modified};
+			// 	req.body = {id: rows[0].id, item_name: name, created_modified_by: created_modified_by, modified: modified};
 			// 	await binController.create(req, res);
 			// }
 
@@ -89,7 +89,7 @@ const bookController = {
 		try {
 			const { name, price, modified } = req.body;
 
-			const sql = 'UPDATE books set name = $1, price = $2, modified = $3 where book_id = $4 RETURNING *';
+			const sql = 'UPDATE items set name = $1, price = $2, modified = $3 where id = $4 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
 
@@ -100,7 +100,7 @@ const bookController = {
 	},
 	deleteById: async(req, res) => {
 		try {
-			const sql = 'DELETE FROM books where book_id = $1 RETURNING *';
+			const sql = 'DELETE FROM items where id = $1 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
@@ -119,4 +119,4 @@ const bookController = {
 	}
 }
 
-module.exports = bookController;
+module.exports = itemController;

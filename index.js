@@ -7,12 +7,12 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
-const bookRouter = require('./routes/bookroutes');
+const itemRouter = require('./routes/itemroutes');
 const userRouter = require('./routes/userroutes');
 const purchaseOrderRouter = require('./routes/purchaseorderroutes');
 const salesOrderRouter = require('./routes/salesorderroutes');
 
-app.use("/api/v1/books", bookRouter);
+app.use("/api/v1/items", itemRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/purchaseOrders", purchaseOrderRouter);
 app.use("/api/v1/salesOrders", salesOrderRouter);
