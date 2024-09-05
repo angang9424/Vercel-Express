@@ -71,11 +71,11 @@ const itemController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { name, price, category, created_modified_by, modified } = req.body;
+			const { name, rate, item_category, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO items(name, price, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO items(name, rate, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, price, category, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [name, rate, item_category, created_modified_by, created_modified_by, modified]);
 
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
