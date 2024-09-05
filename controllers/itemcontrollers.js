@@ -3,7 +3,7 @@ const postgre = require('../database');
 const itemController = {
 	getAll: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("SELECT items.*, bin.qty AS stock_qty FROM items INNER JOIN bin ON bin.item_id = items.id");
+			const { rows } = await postgre.query("SELECT item.*, bin.qty AS stock_qty FROM item INNER JOIN bin ON bin.item_id = item.id");
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
@@ -50,7 +50,7 @@ const itemController = {
 	},
 	getName: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select name from items");
+			const { rows } = await postgre.query("select name from item");
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
@@ -58,7 +58,7 @@ const itemController = {
 	},
 	getById: async(req, res) => {
 		try {
-			const { rows } = await postgre.query("select * from items where id = $1", [req.params.id]);
+			const { rows } = await postgre.query("select * from item where id = $1", [req.params.id]);
 
 			if (rows[0]) {
 				return res.json({msg: "OK", data: rows});
@@ -115,7 +115,7 @@ const itemController = {
 		try {
 			const { name, price, modified } = req.body;
 
-			const sql = 'UPDATE items set name = $1, price = $2, modified = $3 where id = $4 RETURNING *';
+			const sql = 'UPDATE item set name = $1, price = $2, modified = $3 where id = $4 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
 
@@ -126,7 +126,7 @@ const itemController = {
 	},
 	deleteById: async(req, res) => {
 		try {
-			const sql = 'DELETE FROM items where id = $1 RETURNING *';
+			const sql = 'DELETE FROM item where id = $1 RETURNING *';
 
 			const { rows } = await postgre.query(sql, [req.params.id]);
 
