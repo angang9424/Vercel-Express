@@ -73,7 +73,7 @@ const itemController = {
 		try {
 			const { name, rate, item_category, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO items(name, rate, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO item(name, rate, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
 			const { rows } = await postgre.query(sql, [name, rate, item_category, created_modified_by, created_modified_by, modified]);
 
