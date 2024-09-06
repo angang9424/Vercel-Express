@@ -9,45 +9,9 @@ const customerController = {
 			res.json({msg: error.msg});
 		}
 	},
-	userLogin: async(req, res, internalCall=false) => {
+	getById: async(req, res) => {
 		try {
-			const { username, password } = req.body;
-
-			let query_condition = "";
-
-			if (internalCall===true) {
-				query_condition = `AND id = ${req.params.id}`;
-			}
-
-			const { rows } = await postgre.query(`SELECT * FROM users WHERE username = '${username}' ${query_condition}`);
-
-			if (rows) {
-				for (const row of rows) {
-					const match = await bcrypt.compare(password, row.password);
-
-					if (internalCall!=true) {
-						if (match) {
-							row.token = sign({ username: row.username, id: row.id }, "importantsecret");
-							return res.json({ msg: "OK", data: row });
-						} else {
-							return res.json({error: "Wrong Username or Password"});
-						}
-					} else {
-						return match;
-					}
-				}
-			}
-
-			res.status(404).json({msg: "not found"});
-		} catch (error) {
-			console.log(error)
-			res.json({msg: error.msg});
-		}
-	},
-	getUserDetails: async(req, res) => {
-		try {
-			const { username } = req.body;
-			const { rows } = await postgre.query("SELECT first_name, last_name, email, phone_number FROM users WHERE id=$1 AND username=$2", [req.params.id, username]);
+			const { rows } = await postgre.query("SELECT * FROM customers WHERE id=$1", [req.params.id]);
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			res.json({msg: error.msg});
@@ -55,23 +19,11 @@ const customerController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { username, password, created_modified } = req.body;
+			const { first_name, last_name, dob, phone_number, email, gender, nric, active, created_modified_by, modified } = req.body;
 
-			let hash_pass = "";
+			const sql = 'INSERT INTO customers(first_name, last_name, dob, phone_number, email, gender, nric, active, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
 
-			const sql = 'INSERT INTO users(username, password, created, modified) VALUES($1, $2, $3, $4) RETURNING *';
-
-			await bcrypt.hash(password, 10).then((hash) => {
-				hash_pass = hash;
-				// Users.create({
-				// 	username: username,
-				// 	password: hash,
-				// });
-		
-				// res.json("SUCCESS");
-			});
-
-			const { rows } = await postgre.query(sql, [username, hash_pass, created_modified, created_modified]);
+			const { rows } = await postgre.query(sql, [first_name, last_name, dob, phone_number, email, gender, nric, active, created_modified_by, created_modified_by, modified]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
