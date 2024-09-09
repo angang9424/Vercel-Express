@@ -43,23 +43,23 @@ const customerController = {
 			res.json({msg: error.msg});
 		}
 	},
-	// deleteById: async(req, res) => {
-	//     try {
-	//         const sql = 'DELETE FROM books where book_id = $1 RETURNING *'
+	deleteById: async(req, res) => {
+		try {
+			const sql = 'DELETE FROM customers where id = $1 RETURNING *'
 
-	//         const { rows } = await postgre.query(sql, [req.params.id])
+			const { rows } = await postgre.query(sql, [req.params.id])
 
-	//         if (rows[0]) {
-	//             return res.json({msg: "OK", data: rows[0]})
-	//         }
+			if (rows[0]) {
+				return res.json({msg: "OK", data: rows[0]})
+			}
 
-	//         return res.status(404).json({msg: "not found"})
+			return res.status(404).json({msg: "not found"})
 			
 
-	//     } catch (error) {
-	//         res.json({msg: error.msg})
-	//     }
-	// }
+		} catch (error) {
+			res.json({msg: error.msg})
+		}
+	}
 }
 
 module.exports = customerController;
