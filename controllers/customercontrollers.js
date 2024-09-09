@@ -30,39 +30,16 @@ const customerController = {
 			res.json({msg: error.msg});
 		}
 	},
-	updatePassword: async(req, res) => {
-	    try {
-	        const { username, password, newPassword, modified } = req.body;
-			const compare_pass = await userController.userLogin(req, res, true);
+	updateById: async(req, res) => {
+		try {
+			const { first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified } = req.body;
 
-			if (compare_pass) {
-				let hash_pass = "";
+			const sql = 'INSERT INTO customers(first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
 
-				const sql = 'UPDATE users SET password = $1, modified = $2 WHERE id = $3 AND username = $4 RETURNING *';
+			const { rows } = await postgre.query(sql, [first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified]);
 
-				await bcrypt.hash(newPassword, 10).then((hash) => {
-					hash_pass = hash;
-				})
-				const { rows } = await postgre.query(sql, [hash_pass, modified, req.params.id, username]);
-			}
-
-			return res.json({msg: "OK", data: compare_pass});
+			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
-			console.log(error)
-			res.json({msg: error.msg});
-		}
-	},
-	updateUserDetails: async(req, res) => {
-	    try {
-	        const { first_name, last_name, email, phone_number, modified, username } = req.body;
-
-			const sql = 'UPDATE users SET first_name = $1, last_name = $2, email = $3, phone_number = $4, modified = $5 WHERE id = $6 AND username = $7 RETURNING *';
-
-			const { rows } = await postgre.query(sql, [first_name, last_name, email, phone_number, modified, req.params.id, username]);
-
-			return res.json({msg: "OK", data: rows});
-		} catch (error) {
-			console.log(error)
 			res.json({msg: error.msg});
 		}
 	},
