@@ -34,9 +34,9 @@ const customerController = {
 		try {
 			const { first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO customers(first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
+			const sql = 'UPDATE customers set first_name = $1, last_name = $2, full_name = $3, dob = $4, phone_number = $5, email = $6, gender = $7, nric = $8, active = $9, modified_by = $10, modified = $11 WHERE id = $12 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified]);
+			const { rows } = await postgre.query(sql, [first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
