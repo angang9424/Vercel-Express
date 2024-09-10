@@ -4,7 +4,7 @@ const itemController = {
 	getAll: async(req, res) => {
 		try {
 			const { rows } = await postgre.query(`
-				SELECT i.*, b.qty AS stock_qty, ic.name AS item_category
+				SELECT i.*, b.qty AS stock_qty
 				FROM item AS i
 				INNER JOIN bin AS b ON b.item_id = i.id
 			`);
