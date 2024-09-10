@@ -36,11 +36,11 @@ const soController = {
 		try {
 			await client.query('BEGIN');
 
-			let { date, total_amount, items, created_modified_by, modified } = req.body;
+			let { customer_id, customer_name, date, total_amount, items, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO sales_order(date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
+			const sql = 'INSERT INTO sales_order(customer_id, customer_name, date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
 
-			let { rows } = await client.query(sql, [date, total_amount, created_modified_by, created_modified_by, modified]);
+			let { rows } = await client.query(sql, [customer_id, customer_name, date, total_amount, created_modified_by, created_modified_by, modified]);
 
 			for (const item of items) {
 				const child_sql = 'INSERT INTO sales_order_item(idx, item, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
@@ -127,11 +127,11 @@ const soController = {
 	},
 	updateSOById: async(req, res) => {
 		try {
-			const { date, total_amount, modified_by, modified } = req.body;
+			const { customer_id, customer_name, date, total_amount, modified_by, modified } = req.body;
 
-			const sql = 'UPDATE sales_order set date = $1, total_amount = $2, modified_by = $3, modified = $4 where id = $5 RETURNING *';
+			const sql = 'UPDATE sales_order set customer_id = $1, customer_name = $2, date = $3, total_amount = $4, modified_by = $5, modified = $6 where id = $7 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [date, total_amount, modified_by, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [customer_id, customer_name, date, total_amount, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
