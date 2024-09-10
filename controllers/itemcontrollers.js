@@ -7,7 +7,7 @@ const itemController = {
 				SELECT i.*, b.qty AS stock_qty, ic.name AS item_category
 				FROM item AS i
 				INNER JOIN bin AS b ON b.item_id = i.id
-				INNER JOIN item_category AS ic ON i.category = ic.id
+				INNER JOIN item_category AS ic ON i.category::INTEGER = ic.id
 			`);
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
