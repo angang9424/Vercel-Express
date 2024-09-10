@@ -117,11 +117,11 @@ const itemController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { name, price, modified } = req.body;
+			const { name, rate, item_category, modified } = req.body;
 
-			const sql = 'UPDATE item set name = $1, price = $2, modified = $3 where id = $4 RETURNING *';
+			const sql = 'UPDATE item set name = $1, rate = $2, category = $3, modified = $4 where id = $5 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, price, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [name, rate, item_category, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
