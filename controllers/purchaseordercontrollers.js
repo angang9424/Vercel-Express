@@ -32,11 +32,11 @@ const poController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { date, total_amount, created_modified_by, modified } = req.body;
+			const { supplier_id, supplier_name, date, total_amount, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO purchase_order(date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
+			const sql = 'INSERT INTO purchase_order(supplier_id, supplier_name, date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [date, total_amount, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [supplier_id, supplier_name, date, total_amount, created_modified_by, created_modified_by, modified]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
@@ -92,11 +92,11 @@ const poController = {
 	},
 	updatePOById: async(req, res) => {
 		try {
-			const { date, total_amount, modified_by, modified } = req.body;
+			const { supplier_id, supplier_name, date, total_amount, modified_by, modified } = req.body;
 
-			const sql = 'UPDATE purchase_order set date = $1, total_amount = $2, modified_by = $3, modified = $4 where id = $5 RETURNING *';
+			const sql = 'UPDATE purchase_order set supplier_id = $1, supplier_name = $2, date = $3, total_amount = $4, modified_by = $5, modified = $6 where id = $7 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [date, total_amount, modified_by, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [supplier_id, supplier_name, date, total_amount, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
