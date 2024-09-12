@@ -52,7 +52,7 @@ const poController = {
 			const bin_sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
 			for (const row of rows) {
-				const { po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, row.order_id, row.created_modified_by, row.created_modified_by, row.modified]);
+				const { po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, req.params.id, row.created_modified_by, row.created_modified_by, row.modified]);
 				row.id = po_item[0].id;
 				await postgre.query(bin_sql, [row.qty, row.created_modified_by, row.modified, row.item]);
 			}
