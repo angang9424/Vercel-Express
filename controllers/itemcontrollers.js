@@ -6,7 +6,7 @@ const itemController = {
 			const { rows } = await postgre.query(`
 				SELECT i.*, b.qty AS stock_qty
 				FROM item AS i
-				INNER JOIN bin AS b ON b.item_id = i.id
+				LEFT JOIN bin AS b ON b.item_id = i.id
 			`);
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
