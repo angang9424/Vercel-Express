@@ -53,7 +53,7 @@ const poController = {
 			for (const row of rows) {
 				const { rows: po_item } = await postgre.query(sql, [row.idx, row.item_id, row.item_name, row.qty, row.rate, row.amount, order_id, created_modified_by, created_modified_by, modified]);
 				row.id = po_item[0].id;
-				const { rows: bin_item } = await postgre.query(bin_sql, [row.qty, created_modified_by, modified, row.item]);
+				const { rows: bin_item } = await postgre.query(bin_sql, [row.qty, created_modified_by, modified, row.item_id]);
 
 				if (!po_items && po_items.length === 0) {
 					const create_bin_sql = 'INSERT INTO bin(item_id, item_name, qty, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
