@@ -53,7 +53,7 @@ const poController = {
 
 			for (const row of rows) {
 				const { po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, order_id, created_modified_by, created_modified_by, modified]);
-				row.id = po_item[0].id;
+				// row.id = po_item[0].id;
 				await postgre.query(bin_sql, [row.qty, created_modified_by, modified, row.item]);
 			}
 
