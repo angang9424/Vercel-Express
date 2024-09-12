@@ -63,7 +63,7 @@ const poController = {
 			// }
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
-			res.json({msg: error.msg});
+			res.json({msg: error});
 		}
 	},
 	getPOById: async(req, res) => {
