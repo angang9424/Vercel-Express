@@ -45,21 +45,23 @@ const poController = {
 	},
 	createChild: async(req, res) => {
 		try {
-			const { idx, item, qty, rate, amount, order_id, created_modified_by, modified } = req.body;
+			// const { idx, item, qty, rate, amount, order_id, created_modified_by, modified } = req.body;
+			const rows = req.body;
 
 			const sql = 'INSERT INTO purchase_order_item(idx, item, qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
-
-			const { rows } = await postgre.query(sql, [idx, item, qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
-
 			const bin_sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-			await postgre.query(bin_sql, [qty, created_modified_by, modified, item]);
+			for (const row of rows) {
+				const { po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, row.order_id, row.created_modified_by, row.created_modified_by, row.modified]);
+				row.id = po_item[0].id;
+				await postgre.query(bin_sql, [row.qty, row.created_modified_by, row.modified, row.item]);
+			}
 
 			// if (rows[0]) {
 			// 	req.body = {item_id: item, qty: qty, modified_by: created_modified_by, modified: modified};
 			// 	await binController.updateById(req, res);
 			// }
-			res.json({msg: "OK", data: rows[0]});
+			res.json({msg: "OK", data: rows});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
