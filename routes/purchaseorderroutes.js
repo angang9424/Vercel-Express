@@ -7,7 +7,7 @@ router.get("/", purchaseOrderController.getAll);
 router.get("/bookname", purchaseOrderController.getName);
 router.get("/:id", purchaseOrderController.getById);
 router.post("/", purchaseOrderController.create);
-router.post("/createchild/:id", purchaseOrderController.createChild);
+router.post("/createchild", purchaseOrderController.createChild);
 router.get("/getpobyid/:id", purchaseOrderController.getPOById);
 router.get("/getchildbyid/:id", purchaseOrderController.getChildById);
 router.put("/:id", purchaseOrderController.updatePOById);
