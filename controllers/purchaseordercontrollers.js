@@ -52,8 +52,8 @@ const poController = {
 			const bin_sql = 'UPDATE bin set qty = qty + $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
 			for (const row of rows) {
-				const { po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, order_id, created_modified_by, created_modified_by, modified]);
-				// row.id = po_item[0].id;
+				const { rows: po_item } = await postgre.query(sql, [row.idx, row.item, row.qty, row.rate, row.amount, order_id, created_modified_by, created_modified_by, modified]);
+				row.id = po_item[0].id;
 				await postgre.query(bin_sql, [row.qty, created_modified_by, modified, row.item]);
 			}
 
