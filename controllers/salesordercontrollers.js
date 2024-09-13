@@ -36,16 +36,16 @@ const soController = {
 		try {
 			await client.query('BEGIN');
 
-			let { customer_id, customer_name, date, total_amount, items, created_modified_by, modified } = req.body;
+			const { customer_id, customer_name, date, total_amount, items, created_modified_by, modified } = req.body;
 
 			const sql = 'INSERT INTO sales_order(customer_id, customer_name, date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
 
-			let { rows } = await client.query(sql, [customer_id, customer_name, date, total_amount, created_modified_by, created_modified_by, modified]);
+			const { rows } = await client.query(sql, [customer_id, customer_name, date, total_amount, created_modified_by, created_modified_by, modified]);
 
 			for (const item of items) {
-				const child_sql = 'INSERT INTO sales_order_item(idx, item, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
+				const child_sql = 'INSERT INTO sales_order_item(idx, item_id, item_name, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
 
-				await client.query(child_sql, [item.idx, item.item, item.qty, item.stock_qty, item.rate, item.amount, rows[0].id, created_modified_by, created_modified_by, modified]);
+				await client.query(child_sql, [item.idx, item.item_id, item.item_name, item.qty, item.stock_qty, item.rate, item.amount, rows[0].id, created_modified_by, created_modified_by, modified]);
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
