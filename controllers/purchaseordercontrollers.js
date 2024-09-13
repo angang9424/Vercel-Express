@@ -55,8 +55,8 @@ const poController = {
 				row.id = PORows[0].id;
 
 				if (parseFloat(row.price_list_rate) != parseFloat(row.rate)) {
-					const item_price_sql = 'INSERT INTO item_price(item_id, item_name, price_type, party_id, party_name, rate, valid_from, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
-					const { rows: itemPriceRrows } = await postgre.query(item_price_sql, [row.item_id, row.item_name, 'Buying', supplier_id, supplier_name, row.rate, date, created_modified_by, modified, row.item_id]);
+					const item_price_sql = 'INSERT INTO item_price(item_id, item_name, price_type, party_id, party_name, rate, valid_from, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
+					const { rows: itemPriceRrows } = await postgre.query(item_price_sql, [row.item_id, row.item_name, 'Buying', supplier_id, supplier_name, row.rate, date, created_modified_by, created_modified_by, modified]);
 				}
 
 				const { rows: binRrows } = await postgre.query(bin_sql, [row.qty, created_modified_by, modified, row.item_id]);
