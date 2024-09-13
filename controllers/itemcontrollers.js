@@ -29,6 +29,17 @@ const itemController = {
 			res.json({msg: error.msg});
 		}
 	},
+	itemPriceByItemID: async(req, res) => {
+		try {
+			const sql = "SELECT * FROM item_price WHERE item_id = $1";
+
+			const { rows } = await postgre.query(sql, [req.params.id]);
+
+			res.json({msg: "OK", data: rows[0]});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
 	test: async(req, res) => {
 		const client = await postgre.connect();
 		const utcDateTime = new Date().toISOString();
