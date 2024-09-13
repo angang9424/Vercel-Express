@@ -83,11 +83,11 @@ const itemController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { name, rate, item_category, created_modified_by, modified } = req.body;
+			const { name, item_category, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO item(name, rate, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO item(name, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, rate, item_category, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [name, item_category, created_modified_by, created_modified_by, modified]);
 
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
@@ -125,11 +125,11 @@ const itemController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { name, rate, item_category, modified } = req.body;
+			const { name, item_category, modified } = req.body;
 
-			const sql = 'UPDATE item set name = $1, rate = $2, category = $3, modified = $4 where id = $5 RETURNING *';
+			const sql = 'UPDATE item set name = $1, category = $2, modified = $3 where id = $4 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, rate, item_category, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [name, item_category, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
