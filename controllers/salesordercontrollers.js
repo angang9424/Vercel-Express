@@ -49,7 +49,7 @@ const soController = {
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-				const { rows: binRrows } = await client.query(bin_sql, [item.qty, created_modified_by, modified, item.item]);
+				const { rows: binRrows } = await client.query(bin_sql, [item.qty, created_modified_by, modified, item.item_id]);
 
 				if (binRrows[0].qty >= 0) {
 					await client.query('COMMIT');
