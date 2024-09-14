@@ -31,9 +31,19 @@ const itemController = {
 	},
 	itemPriceByItemID: async(req, res) => {
 		try {
-			const sql = "SELECT * FROM item_price WHERE item_id = $1";
+			const { date, party_id, price_type } = req.body;
 
-			const { rows } = await postgre.query(sql, [req.params.id]);
+			const sql = `SELECT *
+						FROM item_price
+						WHERE item_id = $1
+						AND valid_from <= $2
+						AND party_id = $3
+						AND price_type = $4
+						AND modified IS NOT NULL
+						ORDER BY modified DESC
+						LIMIT 1`;
+
+			const { rows } = await postgre.query(sql, [req.params.id, date, party_id, price_type]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
