@@ -45,7 +45,7 @@ const itemController = {
 
 			const { rows } = await postgre.query(sql, [req.params.id, date, party_id, price_type]);
 			
-			res.json({msg: "OK", data: req.body});
+			res.json({msg: "OK", data: { date, party_id, price_type }});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
