@@ -43,9 +43,9 @@ const itemController = {
 						ORDER BY modified DESC
 						LIMIT 1`;
 
-			const { rows } = await postgre.query(sql, [req.params.id, date, party_id, price_type]);
+			const { rows } = await postgre.query(sql, [req.params.id, req.query.date, req.query.party_id, req.query.price_type]);
 			
-			res.json({msg: "OK", data: { date, party_id, price_type }});
+			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			res.json({msg: error.msg});
 		}
