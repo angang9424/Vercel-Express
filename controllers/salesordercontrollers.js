@@ -43,23 +43,26 @@ const soController = {
 			const { rows } = await client.query(sql, [customer_id, customer_name, date, total_amount, created_modified_by, created_modified_by, modified]);
 
 			for (const item of items) {
-				const child_sql = 'INSERT INTO sales_order_item(idx, item_id, item_name, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
+				const child_sql = 'INSERT INTO sales_order_item(idx, item_id, item_name, qty, stock_qty, rate, price_list_rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
 
-				await client.query(child_sql, [item.idx, item.item_id, item.item_name, item.qty, item.stock_qty, item.rate, item.amount, rows[0].id, created_modified_by, created_modified_by, modified]);
+				await client.query(child_sql, [item.idx, item.item_id, item.item_name, item.qty, item.stock_qty, item.rate, item.price_list_rate, item.amount, rows[0].id, created_modified_by, created_modified_by, modified]);
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
 				const { rows: binRrows } = await client.query(bin_sql, [item.qty, created_modified_by, modified, item.item_id]);
 
-				if (binRrows[0].qty >= 0) {
-					await client.query('COMMIT');
-				} else {
+				if (binRrows[0].qty < 0) {
 					await client.query('ROLLBACK');
-					item.stock_qty = parseInt(binRrows[0].qty) + parseInt(item.qty);
 					return res.status(400).json({msg: "not enough stock", data: {items: items}});
+				}
+
+				if (parseFloat(item.price_list_rate) != parseFloat(item.rate)) {
+					const item_price_sql = 'INSERT INTO item_price(item_id, item_name, price_type, party_id, party_name, rate, valid_from, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
+					const { rows: itemPriceRrows } = await postgre.query(item_price_sql, [row.item_id, row.item_name, 'Selling', customer_id, customer_name, row.rate, date, created_modified_by, created_modified_by, modified]);
 				}
 			}
 
+			await client.query('COMMIT');
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			await client.query('ROLLBACK');
@@ -72,33 +75,27 @@ const soController = {
 		try {
 			await client.query('BEGIN');
 
-			const { rows, order_id, customer_id, customer_name, date, created_modified_by, modified } = req.body;
+			const { idx, item, qty, stock_qty, rate, amount, order_id, created_modified_by, modified } = req.body;
 
 			const sql = 'INSERT INTO sales_order_item(idx, item, qty, stock_qty, rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
+
+			const { rows } = await client.query(sql, [idx, item, qty, stock_qty, rate, amount, order_id, created_modified_by, created_modified_by, modified]);
+
 			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-			for (const row of rows) {
-				const { rows: SORows } = await client.query(sql, [row.idx, row.item, row.qty, row.stock_qty, row.rate, row.amount, order_id, created_modified_by, created_modified_by, modified]);
-				row.id = SORows[0].id;
+			const { rows: binRrows } = await client.query(bin_sql, [qty, created_modified_by, modified, item]);
 
-				const { rows: binRrows } = await client.query(bin_sql, [row.qty, created_modified_by, modified, row.item]);
-
-				if (binRrows[0].qty < 0) {
-					await client.query('ROLLBACK');
-					return res.status(400).json({msg: `${row.idx} not enough stock`});
-				}
-
-				if (parseFloat(row.price_list_rate) != parseFloat(row.rate)) {
-					const item_price_sql = 'INSERT INTO item_price(item_id, item_name, price_type, party_id, party_name, rate, valid_from, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *';
-					const { rows: itemPriceRrows } = await postgre.query(item_price_sql, [row.item_id, row.item_name, 'Selling', customer_id, customer_name, row.rate, date, created_modified_by, created_modified_by, modified]);
-				}
+			if (binRrows[0].qty >= 0) {
+				await client.query('COMMIT');
+			} else {
+				await client.query('ROLLBACK');
+				return res.status(400).json({msg: "not enough stock"});
 			}
 
 			// if (rows[0]) {
 			// 	req.body = {item_id: item, qty: qty, modified_by: created_modified_by, modified: modified};
 			// 	await binController.updateById(req, res);
 			// }
-			await client.query('COMMIT');
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
 			await client.query('ROLLBACK');
