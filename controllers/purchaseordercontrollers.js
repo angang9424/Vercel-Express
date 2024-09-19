@@ -44,7 +44,11 @@ const poController = {
 		}
 	},
 	createChild: async(req, res) => {
+		const client = await postgre.connect();
+
 		try {
+			await client.query('BEGIN');
+
 			const { rows, order_id, supplier_id, supplier_name, date, created_modified_by, modified } = req.body;
 
 			const sql = 'INSERT INTO purchase_order_item(idx, item_id, item_name, qty, rate, price_list_rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
@@ -68,8 +72,10 @@ const poController = {
 				}
 			}
 
+			await client.query('COMMIT');
 			res.json({msg: "OK", data: rows});
 		} catch (error) {
+			await client.query('ROLLBACK');
 			res.json({msg: error});
 		}
 	},
