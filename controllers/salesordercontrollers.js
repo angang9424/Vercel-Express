@@ -49,11 +49,12 @@ const soController = {
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-				const { rows: binRrows } = await client.query(bin_sql, [row.qty, created_modified_by, modified, row.item_id]);
+				const { rows: binRows } = await client.query(bin_sql, [row.qty, created_modified_by, modified, row.item_id]);
 
-				if (binRrows[0].qty < 0) {
+				if (binRows[0].qty < 0) {
 					await client.query('ROLLBACK');
-					return res.status(400).json({msg: "not enough stock", data: {items: items}});
+					row.stock_qty = parseInt(binRrows[0].qty) + parseInt(item.qty);
+					return res.status(400).json({msg: "not enough stock", data: {rows: rows}});
 				}
 
 				if (parseFloat(row.price_list_rate) != parseFloat(row.rate)) {
@@ -83,9 +84,9 @@ const soController = {
 
 			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
-			const { rows: binRrows } = await client.query(bin_sql, [qty, created_modified_by, modified, item]);
+			const { rows: binRows } = await client.query(bin_sql, [qty, created_modified_by, modified, item]);
 
-			if (binRrows[0].qty >= 0) {
+			if (binRows[0].qty >= 0) {
 				await client.query('COMMIT');
 			} else {
 				await client.query('ROLLBACK');
