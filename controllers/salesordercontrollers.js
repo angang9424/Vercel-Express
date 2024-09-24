@@ -45,7 +45,7 @@ const soController = {
 			for (const row of rows) {
 				const child_sql = 'INSERT INTO sales_order_item(idx, item_id, item_name, qty, stock_qty, rate, price_list_rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *';
 
-				await client.query(child_sql, [row.idx, row.item_id, row.item_name, row.qty, row.stock_qty, row.rate, row.price_list_rate, row.amount, rows[0].id, created_modified_by, created_modified_by, modified]);
+				await client.query(child_sql, [row.idx, row.item_id, row.item_name, row.qty, row.stock_qty, row.rate, row.price_list_rate, row.amount, SORrows[0].id, created_modified_by, created_modified_by, modified]);
 
 				const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
 
