@@ -9,6 +9,7 @@ app.use(express.json());
 
 const itemRouter = require('./routes/itemroutes');
 const userRouter = require('./routes/userroutes');
+const companyRouter = require('./routes/companyroutes');
 const customerRouter = require('./routes/customerroutes');
 const supplierRouter = require('./routes/supplierroutes');
 const purchaseOrderRouter = require('./routes/purchaseorderroutes');
@@ -16,6 +17,7 @@ const salesOrderRouter = require('./routes/salesorderroutes');
 
 app.use("/api/v1/items", itemRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/company", companyRouter);
 app.use("/api/v1/customers", customerRouter);
 app.use("/api/v1/suppliers", supplierRouter);
 app.use("/api/v1/purchaseOrders", purchaseOrderRouter);
