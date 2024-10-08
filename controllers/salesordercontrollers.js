@@ -36,11 +36,11 @@ const soController = {
 		try {
 			await client.query('BEGIN');
 
-			const { customer_id, customer_name, date, total_amount, rows, created_modified_by, modified } = req.body;
+			const { customer_id, customer_name, date, total_amount, gst, grand_total, rows, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO sales_order(customer_id, customer_name, date, total_amount, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+			const sql = 'INSERT INTO sales_order(customer_id, customer_name, date, total_amount, gst, grand_total, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
 
-			const { rows: SORrows } = await client.query(sql, [customer_id, customer_name, date, total_amount, created_modified_by, created_modified_by, modified]);
+			const { rows: SORrows } = await client.query(sql, [customer_id, customer_name, date, total_amount, gst, grand_total, created_modified_by, created_modified_by, modified]);
 
 			for (const row of rows) {
 				const child_sql = 'INSERT INTO sales_order_item(idx, item_id, item_name, qty, stock_qty, rate, price_list_rate, amount, order_id, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *';
