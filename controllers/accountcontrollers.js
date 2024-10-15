@@ -19,11 +19,11 @@ const accountController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { company_name, gst, active, created_modified_by, modified } = req.body;
+			const { name, parent, balance_must_be, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO accounts(company_name, gst, active, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO accounts(name, parent, balance_must_be, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [company_name, gst, active, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [name, parent, balance_must_be, created_modified_by, created_modified_by, modified]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
