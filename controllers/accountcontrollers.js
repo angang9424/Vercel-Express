@@ -32,11 +32,11 @@ const accountController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified } = req.body;
+			const { parent, balance_must_be, modified_by, modified } = req.body;
 
-			const sql = 'UPDATE accounts set first_name = $1, last_name = $2, full_name = $3, dob = $4, phone_number = $5, email = $6, gender = $7, nric = $8, active = $9, modified_by = $10, modified = $11 WHERE id = $12 RETURNING *';
+			const sql = 'UPDATE accounts set parent = $1, balance_must_be = $2, modified_by = $3, modified = $4 WHERE id = $5 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [first_name, last_name, full_name, dob, phone_number, email, gender, nric, active, modified_by, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [parent, balance_must_be, modified_by, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
