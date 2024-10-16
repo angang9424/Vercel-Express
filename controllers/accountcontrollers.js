@@ -17,6 +17,14 @@ const accountController = {
 			res.json({msg: error.msg});
 		}
 	},
+	accountsGetAll: async(req, res) => {
+		try {
+			const { rows } = await postgre.query("SELECT id AS value, name AS label FROM accounts");
+			res.json({msg: "OK", data: rows});
+		} catch (error) {
+			res.json({msg: error.msg});
+		}
+	},
 	create: async(req, res) => {
 		try {
 			const { name, parent, balance_must_be, created_modified_by, modified } = req.body;
