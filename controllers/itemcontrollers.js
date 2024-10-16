@@ -50,37 +50,6 @@ const itemController = {
 			res.json({msg: error.msg});
 		}
 	},
-	test: async(req, res) => {
-		const client = await postgre.connect();
-		const utcDateTime = new Date().toISOString();
-		const utcDateConvertToLocal = new Date(utcDateTime);
-
-		try {
-			await client.query('BEGIN');
-
-			const { item, qty } = req.body;
-
-			const bin_sql = 'UPDATE bin set qty = qty - $1, modified_by = $2, modified = $3 where item_id = $4 RETURNING *';
-
-			const { rows: binRrows } = await client.query(bin_sql, [qty, 'jang1', utcDateConvertToLocal, item]);
-
-			if (binRrows[0].qty >= 0) {
-				await client.query('COMMIT');
-			} else {
-				await client.query('ROLLBACK');
-				return res.status(400).json({msg: "not enough stock"});
-			}
-
-			// if (rows[0]) {
-			// 	req.body = {id: item, qty: qty, modified_by: created_modified_by, modified: modified};
-			// 	await binController.updateById(req, res);
-			// }
-			return res.json({msg: "OK", data: binRrows[0]});
-		} catch (error) {
-			await client.query('ROLLBACK');
-			res.json({msg: error.msg});
-		}
-	},
 	getName: async(req, res) => {
 		try {
 			const { rows } = await postgre.query("select name from item");
@@ -104,11 +73,11 @@ const itemController = {
 	},
 	create: async(req, res) => {
 		try {
-			const { name, item_category, created_modified_by, modified } = req.body;
+			const { name, item_category, default_account, created_modified_by, modified } = req.body;
 
-			const sql = 'INSERT INTO item(name, category, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+			const sql = 'INSERT INTO item(name, category, default_account, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, item_category, created_modified_by, created_modified_by, modified]);
+			const { rows } = await postgre.query(sql, [name, item_category, default_account, created_modified_by, created_modified_by, modified]);
 
 			const bin_sql = 'INSERT INTO bin(item_id, item_name, created_by, modified_by, modified) VALUES($1, $2, $3, $4, $5) RETURNING *';
 
