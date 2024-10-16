@@ -115,11 +115,11 @@ const itemController = {
 	},
 	updateById: async(req, res) => {
 		try {
-			const { name, item_category, modified } = req.body;
+			const { name, item_category, default_account, modified } = req.body;
 
-			const sql = 'UPDATE item set name = $1, category = $2, modified = $3 where id = $4 RETURNING *';
+			const sql = 'UPDATE item set name = $1, category = $2, default_account = $3, modified = $4 where id = $5 RETURNING *';
 
-			const { rows } = await postgre.query(sql, [name, item_category, modified, req.params.id]);
+			const { rows } = await postgre.query(sql, [name, item_category, default_account, modified, req.params.id]);
 
 			res.json({msg: "OK", data: rows[0]});
 		} catch (error) {
